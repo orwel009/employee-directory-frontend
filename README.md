@@ -39,6 +39,7 @@ git clone https://github.com/orwel009/employee-directory-frontend.git
 cd employee-directory-frontend
 ```
 
+
 ### 2. Install dependencies
 
 ```bash
