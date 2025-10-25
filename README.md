@@ -30,6 +30,8 @@ Built with **Next.js App Router** and **Apollo Client**.
 
 ---
 
+```
+
 ## Setup Instructions
 
 ### 1. Clone the repository
