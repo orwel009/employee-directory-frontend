@@ -1,22 +1,34 @@
+"use client";
+import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
+import { GET_ALL_EMPLOYEES } from "../lib/graphql";
+import { useState } from "react";
 
 export default function HomePage() {
-  const employees = [
-    { id: 1, name: "Alice Johnson", position: "Developer", department: "IT" },
-    { id: 2, name: "Bob Smith", position: "Designer", department: "UI/UX" },
-    { id: 3, name: "Carol Lee", position: "HR Manager", department: "HR" },
-  ];
+  const { data, loading, error } = useQuery(GET_ALL_EMPLOYEES);
+  const [filter, setFilter] = useState("");
 
-  const departments = ["All", "IT", "UI/UX", "HR"];
+  if (loading) return <p className="p-4 text-center">Loading...</p>;
+  if (error) return <p className="p-4 text-red-500">Error loading employees</p>;
+
+  const employees = data.getAllEmployees.filter((e) =>
+    filter ? e.department.name === filter : true
+  );
+
+  const departments = [...new Set(data.getAllEmployees.map((e) => e.department.name))];
 
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-2xl font-bold text-center mb-6">Employee Directory</h1>
 
       <div className="flex justify-between items-center mb-4">
-        <select className="border rounded p-2">
-          {departments.map((dept) => (
-            <option key={dept}>{dept}</option>
+        <select
+          onChange={(e) => setFilter(e.target.value)}
+          className="border rounded p-2"
+        >
+          <option value="">All Departments</option>
+          {departments.map((d) => (
+            <option key={d} value={d}>{d}</option>
           ))}
         </select>
 
@@ -38,17 +50,14 @@ export default function HomePage() {
         </thead>
         <tbody>
           {employees.map((emp) => (
-            <tr
-              key={emp.id}
-              className="border-t hover:bg-gray-50 cursor-pointer"
-            >
+            <tr key={emp.id} className="border-t hover:bg-gray-50 cursor-pointer">
               <td className="p-3">
                 <Link href={`/employee/${emp.id}`} className="text-blue-600 hover:underline">
                   {emp.name}
                 </Link>
               </td>
               <td className="p-3">{emp.position}</td>
-              <td className="p-3">{emp.department}</td>
+              <td className="p-3">{emp.department.name}</td>
             </tr>
           ))}
         </tbody>
